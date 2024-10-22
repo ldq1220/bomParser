@@ -100,10 +100,6 @@
         <template #default="{ row }">
           <div class="product_info" v-if="hasMatchedMaterial(row)">
             <div class="product_info_item">
-              <span class="label">名称：</span>
-              <span class=""></span>
-            </div>
-            <div class="product_info_item">
               <span class="label">编码：</span>
               <span class="">{{ row.matchedIcDatas[0].idCode }}</span>
             </div>
@@ -142,7 +138,7 @@
         min-width="100"
       >
         <template #default="{ row }">
-          <span v-if="hasMatchedMaterial(row)"> ￥ 暂无</span>
+          <div v-if="hasMatchedMaterial(row)"></div>
         </template>
       </el-table-column>
       <el-table-column
@@ -164,12 +160,9 @@
         class-name="column_result"
         width="120"
       >
-        <template #default="">
+        <template #default="{ row }">
           <div class="btns" v-if="bomParserStore.percentage === 100">
-            <el-button
-              type="primary"
-              size="small"
-              @click="changeMaterialDiaolgVisible = true"
+            <el-button type="primary" size="small" @click="changeMaterial(row)"
               >更换物料</el-button
             >
           </div>
@@ -177,7 +170,10 @@
       </el-table-column>
     </el-table>
 
-    <changeMaterialDiaolg v-model:visible="changeMaterialDiaolgVisible" />
+    <changeMaterialDiaolg
+      v-model:visible="changeMaterialDiaolgVisible"
+      :currentMaterial="currentMaterial"
+    />
   </div>
 </template>
 
@@ -191,10 +187,11 @@ import changeMaterialDiaolg from "../changeMaterialDiaolg/index.vue";
 const bomParserStore = useBomParserStore();
 const tableList = ref<BomItem[]>();
 const changeMaterialDiaolgVisible = ref(false);
+const currentMaterial = ref<BomItem>({});
 
 const filterTableList = (status: number) => {
   const data = bomParserStore.bomParserTableData;
-  console.log(status, data);
+
   switch (status) {
     case 0:
       tableList.value = data;
@@ -262,6 +259,11 @@ const getResultTagText = (row: BomItem) => {
 
 const hasMatchedMaterial = (row: BomItem) =>
   row.matchedIcDatas && row.matchedIcDatas.length > 0;
+
+const changeMaterial = (row: BomItem) => {
+  changeMaterialDiaolgVisible.value = true;
+  currentMaterial.value = row;
+};
 </script>
 
 <style lang="scss" scoped>

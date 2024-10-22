@@ -19,8 +19,8 @@ interface CreateJobBody {
 export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
   bomParserStore.tableLoading = true;
   clearBomTableData();
-  const res: any = await reqCreateMaterialIdentifyJob(body);
-  const { jobId, itemList } = res;
+  const { data } = await reqCreateMaterialIdentifyJob(body);
+  const { jobId, itemList } = data;
   itemList.slice(1).forEach((item, index: number) => {
     bomParserStore.bomParserTableData.push({
       seq: index + 1,
@@ -39,25 +39,20 @@ export const getParserStatus = async (jobId: string, hasCrm = false) => {
   let finishedCntCopy = 0;
   timer = setInterval(async () => {
     try {
-      const resJob = await reqGetMaterialIdentifyJob(jobId);
-      const { finishedCnt, status } = resJob[0];
+      const { data } = await reqGetMaterialIdentifyJob(jobId);
+      const { finishedCnt, status } = data[0];
       if (finishedCntCopy >= finishedCnt && status !== 3) return;
       const params = new URLSearchParams({
         jobId,
         startSeq: finishedCntCopy,
       } as any);
-      const resData: any = await reqGetMaterialIdentifyResult(params);
+      const { data: resData } = await reqGetMaterialIdentifyResult(params);
 
       for (let i = 0; i < resData.length; i++) {
-        bomParserStore.bomParserProgressData.push(resData[i].item);
+        bomParserStore.bomParserProgressData.push(resData[i]);
         for (let j = 0; j < bomParserStore.bomParserTableData.length; j++) {
-          if (
-            resData[i].item.seq === bomParserStore.bomParserTableData[j].seq
-          ) {
-            Object.assign(
-              bomParserStore.bomParserTableData[j],
-              resData[i].item
-            );
+          if (resData[i].seq === bomParserStore.bomParserTableData[j].seq) {
+            Object.assign(bomParserStore.bomParserTableData[j], resData[i]);
           }
         }
       }
@@ -88,18 +83,22 @@ export const getParserStatus = async (jobId: string, hasCrm = false) => {
 
 // 直接通过jobId获取数据
 export const getMaterialParserResult = async (jobId: string) => {
-  bomParserStore.tableLoading = true;
-  clearBomTableData();
-  const params = new URLSearchParams({
-    jobId,
-    startSeq: 0,
-  } as any);
-  const resData: any = await reqGetMaterialIdentifyResult(params);
-  bomParserStore.percentage = 100;
-  for (let i = 0; i < resData.length; i++) {
-    bomParserStore.bomParserTableData.push(resData[i].item);
+  try {
+    bomParserStore.tableLoading = true;
+    clearBomTableData();
+    const params = new URLSearchParams({
+      jobId,
+      startSeq: 0,
+    } as any);
+    const { data } = await reqGetMaterialIdentifyResult(params);
+    bomParserStore.percentage = 100;
+    data[0] ? (bomParserStore.fileName = data[0].name) : "";
+    for (let i = 0; i < data.length; i++) {
+      bomParserStore.bomParserTableData.push(data[i]);
+    }
+  } finally {
+    bomParserStore.tableLoading = false;
   }
-  bomParserStore.tableLoading = false;
 };
 
 // 清空数据
