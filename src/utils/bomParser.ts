@@ -9,14 +9,17 @@ import NP from "number-precision";
 
 const bomParserStore = useBomParserStore();
 
-// 创建解析任务
-export const createParserJob = async () => {
-  const { excelUrl, fileName } = bomParserStore.hjsCrm;
-  const res: any = await reqCreateMaterialIdentifyJob({
-    excelUrl: excelUrl,
-    name: fileName,
-  });
+interface CreateJobBody {
+  name: string | undefined;
+  itemList?: string[];
+  excelUrl?: string;
+}
 
+// 创建解析任务
+export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
+  bomParserStore.tableLoading = true;
+  clearBomTableData();
+  const res: any = await reqCreateMaterialIdentifyJob(body);
   const { jobId, itemList } = res;
   itemList.slice(1).forEach((item, index: number) => {
     bomParserStore.bomParserTableData.push({
@@ -24,11 +27,10 @@ export const createParserJob = async () => {
       original_demand: item.join(" "),
     });
   });
-  bomParserStore.bomParserProgressData = [];
   bomParserStore.bomParserStatus = "start";
-  bomParserStore.percentage = 0;
   bomParserStore.hjsCrm.jobId = jobId;
-  getParserStatus(jobId);
+  bomParserStore.tableLoading = false;
+  getParserStatus(jobId, hasCrm);
 };
 
 // 获取识别非标物料的任务详情（完成状态）
@@ -86,7 +88,8 @@ export const getParserStatus = async (jobId: string, hasCrm = false) => {
 
 // 直接通过jobId获取数据
 export const getMaterialParserResult = async (jobId: string) => {
-  bomParserStore.bomParserTableData = [];
+  bomParserStore.tableLoading = true;
+  clearBomTableData();
   const params = new URLSearchParams({
     jobId,
     startSeq: 0,
@@ -96,10 +99,11 @@ export const getMaterialParserResult = async (jobId: string) => {
   for (let i = 0; i < resData.length; i++) {
     bomParserStore.bomParserTableData.push(resData[i].item);
   }
+  bomParserStore.tableLoading = false;
 };
 
 // 清空数据
-export const handleBomTableData = () => {
+export const clearBomTableData = () => {
   bomParserStore.bomParserTableData = [];
   bomParserStore.bomParserProgressData = [];
   bomParserStore.percentage = 0;

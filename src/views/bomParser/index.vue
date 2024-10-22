@@ -1,6 +1,6 @@
 <template>
   <div class="bom_parser_btns">
-    <BomUpload v-model:tableLoading="tableLoading" v-if="hasInit" />
+    <BomUpload v-if="hasInit" />
     <DownloadBom />
     <BomParserProgress
       v-show="
@@ -11,7 +11,7 @@
   </div>
 
   <BomParserTabs />
-  <BomParserTable v-loading="tableLoading" />
+  <BomParserTable />
 </template>
 
 <script setup lang="ts">
@@ -25,12 +25,10 @@ import BomParserTabs from "@/components/BomParserTabs/index.vue";
 import useBomParserStore from "@/store/bomParser";
 
 const bomParserStore = useBomParserStore();
-const tableLoading = ref(false);
 const hasInit = ref(false);
 
 onMounted(() => {
   hasInit.value = true;
-  bomParserStore.percentage = 100;
   initialBomData.forEach((item) => {
     bomParserStore.bomParserTableData.push(item);
   });

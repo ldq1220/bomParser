@@ -17,29 +17,24 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from "vue";
 import { read, utils } from "xlsx";
-import {
-  reqCreateMaterialIdentifyJob,
-  reqGetMaterialIdentifyJob,
-  reqGetMaterialIdentifyResult,
-} from "@/api/bomParser";
 import { useRoute } from "vue-router";
-import NP from "number-precision";
 import useBomParserStore from "@/store/bomParser";
+import {
+  createParserJob,
+  getMaterialParserResult,
+  clearBomTableData,
+} from "@/utils/bomParser";
 
 const bomParserStore = useBomParserStore();
 const route = useRoute();
 
-onMounted(() => {
+onMounted(async () => {
   const { jobId } = route.query;
-  if (jobId) getMaterialParserResult(jobId as string);
+  if (jobId) await getMaterialParserResult(jobId as string);
 });
 
 const fileInput = ref();
 const controller: any = ref(null);
-const tableLoading = defineModel("tableLoading", {
-  default: false,
-  type: Boolean,
-});
 
 const handleParser = async () => {
   fileInput.value.click();
@@ -55,7 +50,7 @@ const handleFileChange = async (event: any) => {
         bomParserStore.bomParserStatus = "not";
         const bomData = await parseExcel(fileData);
 
-        createParserJob(bomData, file.name);
+        createParserJob(false, { name: file.name, itemList: bomData });
       })
       .catch((error) => {
         console.error("Error reading or parsing file:", error);
@@ -101,113 +96,17 @@ const parseExcel = (fileData: any) => {
   return data;
 };
 
-const createParserJob = async (bomData: string[], fileName: string) => {
-  tableLoading.value = true;
-  bomParserStore.bomParserStatus = "start";
-  handleBomTableData();
-  const res: any = await reqCreateMaterialIdentifyJob({
-    itemList: bomData,
-    name: fileName,
-  });
-  const { jobId, itemList } = res;
-  itemList.slice(1).forEach((item, index: number) => {
-    bomParserStore.bomParserTableData.push({
-      seq: index + 1,
-      original_demand: item.join(" "),
-    });
-  });
-
-  tableLoading.value = false;
-  getParserStatus(jobId);
-};
-
-// 获取识别非标物料的任务详情（完成状态）
-const getParserStatus = async (jobId: string) => {
-  let timer;
-  let finishedCntCopy = 0;
-  timer = setInterval(async () => {
-    try {
-      const resJob = await reqGetMaterialIdentifyJob(jobId);
-      const { finishedCnt, status, itemCnt } = resJob[0];
-      if (finishedCntCopy >= finishedCnt) return;
-      const params = new URLSearchParams({
-        jobId,
-        startSeq: finishedCntCopy,
-      } as any);
-      const resData: any = await reqGetMaterialIdentifyResult(params);
-
-      for (let i = 0; i < resData.length; i++) {
-        bomParserStore.bomParserProgressData.push(resData[i].item);
-        for (let j = 0; j < bomParserStore.bomParserTableData.length; j++) {
-          if (
-            resData[i].item.seq === bomParserStore.bomParserTableData[j].seq
-          ) {
-            Object.assign(
-              bomParserStore.bomParserTableData[j],
-              resData[i].item
-            );
-          }
-        }
-      }
-
-      if (status === 3 || finishedCnt >= itemCnt) {
-        // 任务完成
-        bomParserStore.bomParserStatus = "end";
-        bomParserStore.percentage = 100;
-        clearInterval(timer);
-      } else {
-        bomParserStore.percentage = Number(
-          (
-            NP.divide(
-              bomParserStore.bomParserProgressData.length,
-              bomParserStore.bomParserTableData.length
-            ) * 100
-          ).toFixed(2)
-        );
-      }
-
-      finishedCntCopy = finishedCnt;
-    } catch {
-      // clearInterval(timer);
-    }
-  }, 3000);
-};
-
-// 直接通知jobID获取数据
-const getMaterialParserResult = async (jobId: string) => {
-  tableLoading.value = true;
-  handleBomTableData();
-
-  const params = new URLSearchParams({
-    jobId,
-    startSeq: 0,
-  } as any);
-  const resData: any = await reqGetMaterialIdentifyResult(params);
-  bomParserStore.percentage = 100;
-  for (let i = 0; i < resData.length; i++) {
-    bomParserStore.bomParserTableData.push(resData[i].item);
-  }
-  tableLoading.value = false;
-};
-
 const handleClear = () => {
   fileInput.value.value = ""; // 清空文件输入的值
   bomParserStore.bomParserStatus = "not";
   bomParserStore.fileName = "";
-  handleBomTableData();
+  clearBomTableData();
   if (controller.value) {
     controller.value.abort(); // 终止fetch请求
   }
   nextTick(() => {
     controller.value = null;
   });
-};
-
-// 清空数据
-const handleBomTableData = () => {
-  bomParserStore.bomParserTableData = [];
-  bomParserStore.bomParserProgressData = [];
-  bomParserStore.percentage = 0;
 };
 </script>
 

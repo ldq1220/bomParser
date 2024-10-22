@@ -16,10 +16,11 @@ const useBomParserStore = defineStore("BomParserStore", () => {
   const bomParserTableData = ref<BomItem[]>([]);
   const bomParserProgressData = ref<BomItem[]>([]);
   const bomParserStatus = ref("end"); // not start end
-  const percentage = ref(0); // 0-100 解析进度
+  const percentage = ref(100); // 0-100 解析进度
   const fileName = ref<string | undefined>("BOM解析.xlsx");
   const bomParserUuid = ref();
   const currentTabLabel = ref("全部");
+  const tableLoading = ref(false);
   const hjsCrm: hjsCrm = reactive({
     bomId: undefined,
     jobId: "",
@@ -40,21 +41,22 @@ const useBomParserStore = defineStore("BomParserStore", () => {
 
       bomParserTableData.value.forEach((item: BomItem) => {
         if (item.matchedIcDatas) {
-          let status = item.matchedIcDatas?.[0]?.status;
-          switch (status) {
-            case 3:
-            case undefined:
-              status3.value++;
-              break;
-            case 1:
-              status1.value++;
-              break;
-            case 2:
-              status2.value++;
-              break;
-            default:
-              break;
-          }
+          let length = item.matchedIcDatas?.length;
+          length > 0 ? status2.value++ : status3.value++;
+          // switch (length > 0) {
+          //   case 3:
+          //   case undefined:
+          //     status3.value++;
+          //     break;
+          //   case 1:
+          //     status1.value++;
+          //     break;
+          //   case 2:
+          //     status2.value++;
+          //     break;
+          //   default:
+          //     break;
+          // }
         } else if (!item.matchedIcDatas && percentage.value === 100) {
           status4.value++;
         }
@@ -74,6 +76,7 @@ const useBomParserStore = defineStore("BomParserStore", () => {
     fileName,
     bomParserUuid,
     currentTabLabel,
+    tableLoading,
     hjsCrm,
     status3,
     status1,

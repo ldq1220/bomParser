@@ -17,6 +17,8 @@ export const getCrmData = async (filterByTk: any) => {
         authorization: `Bearer ${token}`,
       },
     });
+    console.log(res);
+
     const { id, file_url, bom_status, job_id } = res.data.data;
     bomParserStore.fileName = getFileName(file_url as string);
     Object.assign(bomParserStore.hjsCrm, {

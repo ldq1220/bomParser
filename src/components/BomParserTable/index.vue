@@ -1,5 +1,8 @@
 <template>
-  <div class="bom_parser_table margin_auto">
+  <div
+    class="bom_parser_table margin_auto"
+    v-loading="bomParserStore.tableLoading"
+  >
     <el-table
       :data="tableList"
       border
@@ -191,7 +194,7 @@ const changeMaterialDiaolgVisible = ref(false);
 
 const filterTableList = (status: number) => {
   const data = bomParserStore.bomParserTableData;
-
+  console.log(status, data);
   switch (status) {
     case 0:
       tableList.value = data;
@@ -231,6 +234,7 @@ watch(
   },
   {
     immediate: true,
+    deep: true,
   }
 );
 
@@ -246,9 +250,6 @@ const getResultTagType = (row: BomItem) => {
 };
 
 const getResultTagText = (row: BomItem) => {
-  console.log("getResultTagText--------", row);
-  console.log("1");
-
   const { matchedIcDatas: M } = row;
   if (hasMatchedMaterial(row))
     return (M as Array<{ status: number }>)[0].status === 1
