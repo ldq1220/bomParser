@@ -1,12 +1,12 @@
 <template>
-    <div class="bom_parser_btns">
-        <BomUpload v-if="hasInit" />
-        <DownloadBom />
-        <BomParserProgress v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0" />
-    </div>
+  <div class="bom_parser_btns">
+    <BomUpload v-if="hasInit" />
+    <DownloadBom />
+    <BomParserProgress v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0" />
+  </div>
 
-    <BomParserTabs />
-    <BomParserTable />
+  <BomParserTabs />
+  <BomParserTable />
 </template>
 
 <script setup lang="ts">
@@ -23,18 +23,18 @@ const bomParserStore = useBomParserStore()
 const hasInit = ref(false)
 
 onMounted(() => {
-    hasInit.value = true
-    initialBomData.forEach((item) => {
-        bomParserStore.bomParserTableData.push(item)
-    })
+  hasInit.value = true
+  initialBomData.forEach((item) => {
+    bomParserStore.bomParserTableData.push(item)
+  })
 })
 </script>
 
 <style lang="scss" scoped>
 .bom_parser_btns {
-    width: 90%;
-    margin: 40px auto;
-    display: flex;
-    justify-content: space-between;
+  width: 90%;
+  margin: 40px auto;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

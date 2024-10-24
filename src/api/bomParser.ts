@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 enum API {
-    MATERIAL_IDENTIFY_JOB = '/material/identify-job',
+  MATERIAL_IDENTIFY_JOB = '/material/identify-job'
 }
 
 // 新增一个识别非标物料的任务
