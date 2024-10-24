@@ -62,7 +62,11 @@ export const getParserStatus = async (jobId: string, hasCrm = false) => {
         clearInterval(timer)
         if (hasCrm) await updateCrmData() // 更新crm数据
       } else {
-        bomParserStore.percentage = Number((NP.divide(bomParserStore.bomParserProgressData.length, bomParserStore.bomParserTableData.length) * 100).toFixed(2))
+        bomParserStore.percentage = Number(
+          (
+            NP.divide(bomParserStore.bomParserProgressData.length, bomParserStore.bomParserTableData.length) * 100
+          ).toFixed(2)
+        )
       }
 
       finishedCntCopy = finishedCnt

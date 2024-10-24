@@ -29,7 +29,14 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "*.ts", "src/views/hjsCrm/components/bomParservue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "*.ts",
+    "src/views/hjsCrm/components/bomParservue"
+  ]
   // "references": [
   //     {
   //         "path": "./tsconfig.node.json"

@@ -2,7 +2,9 @@
   <div class="bom_parser_btns">
     <BomUpload v-if="hasInit" />
     <DownloadBom />
-    <BomParserProgress v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0" />
+    <BomParserProgress
+      v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0"
+    />
   </div>
 
   <BomParserTabs />

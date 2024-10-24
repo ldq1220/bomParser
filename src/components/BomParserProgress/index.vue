@@ -9,7 +9,9 @@
             paddingLeft: '10px'
           }"
         >
-          <span class="percentage-label" style="margin-right: 20px" v-show="bomParserStore.fileName">{{ bomParserStore.fileName }}</span>
+          <span class="percentage-label" style="margin-right: 20px" v-show="bomParserStore.fileName">
+            {{ bomParserStore.fileName }}
+          </span>
           <span class="percentage-value">{{ percentage }}%</span>
         </div>
       </template>

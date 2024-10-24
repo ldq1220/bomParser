@@ -1,7 +1,9 @@
 <template>
   <div class="bom_parser_container">
     <!-- <el-button type="primary" @click="createParserJob">触发查</el-button> -->
-    <BomParserProgress v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0" />
+    <BomParserProgress
+      v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0"
+    />
     <saveButton />
   </div>
   <BomParserTabs />

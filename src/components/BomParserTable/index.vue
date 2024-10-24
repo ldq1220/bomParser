@@ -14,7 +14,12 @@
       <el-table-column type="index" label="序号" width="60" fixed="left" />
       <el-table-column prop="" label="原始需求" width="200px" fixed="left">
         <template #default="{ row }">
-          <TextTooltip :content="row.original_demand" :lineNum="4" tooltipEffect="light" tooltipPlacement="right-start" />
+          <TextTooltip
+            :content="row.original_demand"
+            :lineNum="4"
+            tooltipEffect="light"
+            tooltipPlacement="right-start"
+          />
         </template>
       </el-table-column>
       <el-table-column prop="" label="分类" width="160px" fixed="left">
@@ -48,7 +53,9 @@
             </p>
             <p>
               <span class="label">参数：</span>
-              <span>{{ `${row.spec.value ?? ''}${row.spec.unit ?? ''} ${row.spec.tolerance ?? ''}` }}</span>
+              <span>
+                {{ `${row.spec.value ?? ''}${row.spec.unit ?? ''} ${row.spec.tolerance ?? ''}` }}
+              </span>
             </p>
           </div>
         </template>

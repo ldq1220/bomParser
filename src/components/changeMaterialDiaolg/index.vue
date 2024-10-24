@@ -21,7 +21,9 @@
       <el-table-column label="品牌" prop="manufacturer" />
       <el-table-column label="单价" prop="price">
         <template #default="{ row }">
-          <p v-for="item in JSON.parse(JSON.parse(row.price))" :key="item.unitPrice" style="font-size: 12px">{{ item.quantity }}+ : ￥{{ item.unitPrice }}</p>
+          <p v-for="item in JSON.parse(JSON.parse(row.price))" :key="item.unitPrice" style="font-size: 12px">
+            {{ item.quantity }}+ : ￥{{ item.unitPrice }}
+          </p>
         </template>
       </el-table-column>
     </el-table>

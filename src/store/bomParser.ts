@@ -12,7 +12,6 @@ interface hjsCrm {
 }
 
 const useBomParserStore = defineStore('BomParserStore', () => {
-  // const bomParserTableData = ref<BomItem[]>(initialBomData);
   const bomParserTableData = ref<BomItem[]>([])
   const bomParserProgressData = ref<BomItem[]>([])
   const bomParserStatus = ref('end') // not start end

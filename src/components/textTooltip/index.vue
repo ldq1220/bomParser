@@ -1,7 +1,7 @@
 <template>
   <el-tooltip :content="props.content" :disabled="!isShowTooltip" :effect="tooltipEffect" :placement="tooltipPlacement">
     <template #content>
-      <el-scrollbar height="200px">
+      <el-scrollbar max-height="200px">
         <p style="max-width: 180px">{{ props.content }}</p>
       </el-scrollbar>
     </template>

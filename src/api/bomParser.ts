@@ -11,7 +11,8 @@ export const reqCreateMaterialIdentifyJob = (data: any) => request.post(API.MATE
 export const reqGetMaterialIdentifyJob = (jobId: string) => request.get(`${API.MATERIAL_IDENTIFY_JOB}/?jobId=${jobId}`)
 
 // 获取已识别成功的结果（物料列表）
-export const reqGetMaterialIdentifyResult = (params: URLSearchParams) => request.get(`${API.MATERIAL_IDENTIFY_JOB}/result/?${params}`)
+export const reqGetMaterialIdentifyResult = (params: URLSearchParams) =>
+  request.get(`${API.MATERIAL_IDENTIFY_JOB}/result/?${params}`)
 
 // 定时检查物料识别任务进度 （未开始 ==> 进行中 ==> 已完成）
 export const reqCheckMaterialIdentifyJob = () => request.post(`${API.MATERIAL_IDENTIFY_JOB}/check`)
