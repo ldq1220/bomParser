@@ -1,38 +1,38 @@
 {
-  "compilerOptions": {
-      "target": "ES2020",
-      "useDefineForClassFields": true,
-      "module": "ESNext",
-      "lib": ["ES2020", "DOM", "DOM.Iterable"],
-      "skipLibCheck": true,
-      "esModuleInterop": true,
-      "types": ["node"],
+    "compilerOptions": {
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "types": ["node"],
 
-      /* Bundler mode */
-      "moduleResolution": "bundler",
-      "allowImportingTsExtensions": true,
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "noEmit": true,
-      "noImplicitAny": false,
-      "jsx": "preserve",
+        /* Bundler mode */
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "noImplicitAny": false,
+        "jsx": "preserve",
 
-      /* Linting */
-      "strict": true,
-      "noUnusedLocals": true, // 不能有声明后未被使用的变量或参数
-      "noUnusedParameters": true, // 检查未使用的参数
-      "noFallthroughCasesInSwitch": true, // 检查switch中是否含有case没有使用break跳出
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true, // 不能有声明后未被使用的变量或参数
+        "noUnusedParameters": true, // 检查未使用的参数
+        "noFallthroughCasesInSwitch": true, // 检查switch中是否含有case没有使用break跳出
 
-      "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
-      "paths": {
-          //路径映射，相对于baseUrl
-          "@/*": ["src/*"]
-      }
-  },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "*.ts", "src/views/hjsCrm/components/bomParservue"]
-  // "references": [
-  //     {
-  //         "path": "./tsconfig.node.json"
-  //     }
-  // ]
+        "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
+        "paths": {
+            //路径映射，相对于baseUrl
+            "@/*": ["src/*"]
+        }
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "*.ts", "src/views/hjsCrm/components/bomParservue"]
+    // "references": [
+    //     {
+    //         "path": "./tsconfig.node.json"
+    //     }
+    // ]
 }

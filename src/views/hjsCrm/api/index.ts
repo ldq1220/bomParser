@@ -1,2 +1,2 @@
-export * from "./updateCrmData";
-export * from "./getCrmData";
+export * from './updateCrmData'
+export * from './getCrmData'
