@@ -1,4 +1,4 @@
-import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyJob, reqGetMaterialIdentifyResult } from '@/api/bomParser'
+import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult } from '@/api/bomParser'
 import { updateCrmData } from '@/views/hjsCrm/api/updateCrmData'
 import useBomParserStore from '@/store/bomParser'
 import NP from 'number-precision'
@@ -18,7 +18,7 @@ export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
   clearBomTableData()
   const { data } = await reqCreateMaterialIdentifyJob(body)
 
-  const { jobId, itemList, headerSeq } = data
+  const { jobId, itemList, headerSeq, itemCnt } = data
   itemList.slice(headerSeq + 1).forEach((item, index: number) => {
     bomParserStore.bomParserTableData.push({
       seq: index + 1,
@@ -28,34 +28,33 @@ export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
 
   bomParserStore.hjsCrm.jobId = jobId
   bomParserStore.tableLoading = false
-  getParserStatus(jobId, hasCrm)
+  getParserResult(jobId, itemCnt, hasCrm)
 }
 
 // 获取识别非标物料的任务详情（完成状态）
-export const getParserStatus = async (jobId: string, hasCrm = false) => {
-  let finishedCntCopy = 0
+export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = false) => {
+  let startSeq = 0
   const timer = setInterval(async () => {
     try {
-      const { data } = await reqGetMaterialIdentifyJob(jobId)
-      const { finishedCnt, status } = data[0]
-      if (finishedCntCopy >= finishedCnt && status !== 3) return
       const params = new URLSearchParams({
         jobId,
-        startSeq: finishedCntCopy
+        startSeq
       } as any)
       const { data: resData } = await reqGetMaterialIdentifyResult(params)
-
-      for (let i = 0; i < resData.length; i++) {
-        bomParserStore.bomParserProgressData.push(resData[i])
-        for (let j = 0; j < bomParserStore.bomParserTableData.length; j++) {
-          if (resData[i].seq === bomParserStore.bomParserTableData[j].seq) {
-            delete resData[i].original_demand
-            Object.assign(bomParserStore.bomParserTableData[j], resData[i])
-          }
+      startSeq = resData[resData.length - 1].seq
+      const bomParserProgressDataIds = bomParserStore.bomParserProgressData.map((item) => item.id)
+      resData.forEach((item) => {
+        if (!bomParserProgressDataIds.includes(item.id)) {
+          bomParserStore.bomParserProgressData.push(item)
         }
-      }
 
-      if (status === 3) {
+        const matchedItem = bomParserStore.bomParserTableData.find((tableItem) => tableItem.seq === item.seq)
+        if (matchedItem) {
+          delete item.original_demand
+          Object.assign(matchedItem, item)
+        }
+      })
+      if (startSeq >= itemCnt) {
         // 任务完成
         bomParserStore.bomParserStatus = 'end'
         bomParserStore.percentage = 100
@@ -68,8 +67,6 @@ export const getParserStatus = async (jobId: string, hasCrm = false) => {
           ).toFixed(2)
         )
       }
-
-      finishedCntCopy = finishedCnt
     } catch {
       // clearInterval(timer);
     }

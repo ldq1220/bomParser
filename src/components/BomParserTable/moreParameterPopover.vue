@@ -24,7 +24,8 @@ const parameterView = [
   { label: '精度', value: 'tolerance' },
   { label: '阻值', value: 'resistance' },
   { label: '容值', value: 'capacitance' },
-  { label: '感值', value: 'inductance' }
+  { label: '感值', value: 'inductance' },
+  { lable: '功率', value: 'power' }
 ]
 </script>
 

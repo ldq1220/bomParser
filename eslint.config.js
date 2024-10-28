@@ -16,7 +16,6 @@ export default [
     rules: {
       // Vue 特定规则
       'vue/multi-word-component-names': 'off',
-      'vue/no-multiple-template-root': 'error',
       'vue/require-default-prop': 'off',
       'vue/html-indent': ['error', 2],
       'vue/html-self-closing': [
@@ -31,9 +30,10 @@ export default [
       ],
       'vue/no-multiple-template-root': 'off',
       'vue/no-explicit-any': 'off',
+      'no-unused-expressions': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-expressions': [
-        'error',
+        'off',
         {
           allowShortCircuit: true,
           allowTernary: true,

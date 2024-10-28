@@ -54,7 +54,9 @@
             <p>
               <span class="label">参数：</span>
               <span>
-                {{ `${row.spec.value ?? ''}${row.spec.unit ?? ''} ${row.spec.tolerance ?? ''}` }}
+                {{
+                  `${row.spec.value ?? ''}${row.spec.unit ?? ''} ${row.spec.tolerance ?? ''} ${row.spec.power ?? ''}`
+                }}
               </span>
             </p>
           </div>
@@ -96,6 +98,7 @@
                 ${row.matchedIcDatas[0].capacitance ?? ''}
                 ${row.matchedIcDatas[0].inductance ?? ''} 
                 ${row.matchedIcDatas[0].tolerance ?? ''}
+                ${row.matchedIcDatas[0].power ?? ''}
                 `
                 }}
               </span>
