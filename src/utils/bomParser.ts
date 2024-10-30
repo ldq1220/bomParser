@@ -1,9 +1,18 @@
 import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult } from '@/api/bomParser'
 import { updateCrmData } from '@/views/hjsCrm/api/updateCrmData'
+import { BroadcastChannel } from 'broadcast-channel'
 import useBomParserStore from '@/store/bomParser'
 import NP from 'number-precision'
 
 const bomParserStore = useBomParserStore()
+const channel = new BroadcastChannel('parserJob')
+let parserResultTimer: any = null
+
+channel.onmessage = (msg) => {
+  if (msg === 'parserJobStop' && parserResultTimer) {
+    clearInterval(parserResultTimer)
+  }
+}
 
 interface CreateJobBody {
   name: string | undefined
@@ -34,7 +43,7 @@ export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
 // 获取识别非标物料的任务详情（完成状态）
 export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = false) => {
   let startSeq = 0
-  const timer = setInterval(async () => {
+  parserResultTimer = setInterval(async () => {
     try {
       const params = new URLSearchParams({
         jobId,
@@ -58,7 +67,7 @@ export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = f
         // 任务完成
         bomParserStore.bomParserStatus = 'end'
         bomParserStore.percentage = 100
-        clearInterval(timer)
+        clearInterval(parserResultTimer)
         if (hasCrm) await updateCrmData() // 更新crm数据
       } else {
         bomParserStore.percentage = Number(
@@ -68,7 +77,7 @@ export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = f
         )
       }
     } catch {
-      // clearInterval(timer);
+      // clearInterval(parserResultTimer);
     }
   }, 3000)
 }

@@ -22,10 +22,12 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { BroadcastChannel } from 'broadcast-channel'
+import { ElNotification } from 'element-plus'
 import useBomParserStore from '@/store/bomParser'
 
+const channel = new BroadcastChannel('parserJob')
 const bomParserStore = useBomParserStore()
-
 let sumTimer: any = null
 let sumTime = ref(0)
 
@@ -43,6 +45,19 @@ watch(
     }
   }
 )
+
+watch(sumTime, (newVal) => {
+  if (newVal >= 60 * 20) {
+    channel.postMessage('parserJobStop')
+    ElNotification({
+      title: '解析任务异常',
+      type: 'error',
+      message: 'BOM解析任务超时，请重试。',
+      duration: 0,
+      offset: 65
+    })
+  }
+})
 </script>
 
 <style lang="scss" scoped>
