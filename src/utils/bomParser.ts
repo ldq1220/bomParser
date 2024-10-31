@@ -1,4 +1,4 @@
-import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult } from '@/api/bomParser'
+import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult, reqGetMaterialIdentifyJob } from '@/api/bomParser'
 import { updateCrmData } from '@/views/hjsCrm/api/updateCrmData'
 import { BroadcastChannel } from 'broadcast-channel'
 import useBomParserStore from '@/store/bomParser'
@@ -22,26 +22,22 @@ interface CreateJobBody {
 
 // 创建解析任务
 export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
-  bomParserStore.tableLoading = true
-  bomParserStore.bomParserStatus = 'start'
-  clearBomTableData()
-  const { data } = await reqCreateMaterialIdentifyJob(body)
-
-  const { jobId, itemList, headerSeq, itemCnt } = data
-  itemList.slice(headerSeq + 1).forEach((item, index: number) => {
-    bomParserStore.bomParserTableData.push({
-      seq: index + 1,
-      original_demand: item.join(' ')
-    })
-  })
-
-  bomParserStore.hjsCrm.jobId = jobId
-  bomParserStore.tableLoading = false
-  getParserResult(jobId, itemCnt, hasCrm)
+  try {
+    bomParserStore.tableLoading = true
+    bomParserStore.bomParserStatus = 'start'
+    const { data } = await reqCreateMaterialIdentifyJob(body)
+    const { jobId, itemList, headerSeq, itemCnt } = data
+    localStorage.setItem('jobData', JSON.stringify({ jobId, itemList, headerSeq, itemCnt }))
+    bomParserStore.hjsCrm.jobId = jobId
+    if (hasCrm) await updateCrmData() // 更新crm数据
+    getMaterialParserResult(jobId)
+  } finally {
+    bomParserStore.tableLoading = false
+  }
 }
 
 // 获取识别非标物料的任务详情（完成状态）
-export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = false) => {
+export const getParserResult = async (jobId: string, itemCnt: number) => {
   let startSeq = 0
   parserResultTimer = setInterval(async () => {
     try {
@@ -68,7 +64,6 @@ export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = f
         bomParserStore.bomParserStatus = 'end'
         bomParserStore.percentage = 100
         clearInterval(parserResultTimer)
-        if (hasCrm) await updateCrmData() // 更新crm数据
       } else {
         bomParserStore.percentage = Number(
           (
@@ -82,20 +77,36 @@ export const getParserResult = async (jobId: string, itemCnt: number, hasCrm = f
   }, 3000)
 }
 
-// 直接通过jobId获取数据
+// 直接通过jobId 获取状态 判断状态 是进行中还是结束
 export const getMaterialParserResult = async (jobId: string) => {
   try {
-    bomParserStore.tableLoading = true
     clearBomTableData()
-    const params = new URLSearchParams({
-      jobId,
-      startSeq: 0
-    } as any)
-    const { data } = await reqGetMaterialIdentifyResult(params)
-    bomParserStore.percentage = 100
-    data[0] ? (bomParserStore.fileName = data[0].name) : ''
-    for (let i = 0; i < data.length; i++) {
-      bomParserStore.bomParserTableData.push(data[i])
+    bomParserStore.tableLoading = true
+    const {
+      data: { name, status }
+    } = await reqGetMaterialIdentifyJob(jobId)
+    bomParserStore.fileName = name
+
+    if (status === 3) {
+      const params = new URLSearchParams({
+        jobId,
+        startSeq: 0
+      } as any)
+      const { data } = await reqGetMaterialIdentifyResult(params)
+      bomParserStore.percentage = 100
+      for (let i = 0; i < data.length; i++) {
+        bomParserStore.bomParserTableData.push(data[i])
+      }
+    } else {
+      bomParserStore.bomParserStatus = 'start'
+      const { jobId, itemList, headerSeq, itemCnt } = JSON.parse(localStorage.getItem('jobData') || '{}')
+      itemList.slice(headerSeq + 1).forEach((item: any[], index: number) => {
+        bomParserStore.bomParserTableData.push({
+          seq: index + 1,
+          original_demand: item.join(' ')
+        })
+      })
+      getParserResult(jobId, itemCnt)
     }
   } finally {
     bomParserStore.tableLoading = false

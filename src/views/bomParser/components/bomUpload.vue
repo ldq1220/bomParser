@@ -12,21 +12,21 @@ import { onMounted, ref } from 'vue'
 import { read, utils } from 'xlsx'
 import { useRoute } from 'vue-router'
 import useBomParserStore from '@/store/bomParser'
+import { BroadcastChannel } from 'broadcast-channel'
 import { createParserJob, getMaterialParserResult, clearBomTableData } from '@/utils/bomParser'
 
 const bomParserStore = useBomParserStore()
 const route = useRoute()
+const channel = new BroadcastChannel('parserJob')
 
 onMounted(async () => {
-  const { jobId } = route.query
+  const jobId = route.query.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
   if (jobId) await getMaterialParserResult(jobId as string)
 })
 
 const fileInput = ref()
 
-const handleParser = async () => {
-  fileInput.value.click()
-}
+const handleParser = async () => fileInput.value.click()
 
 const handleFileChange = async (event: any) => {
   const file = event.target.files[0]
@@ -37,7 +37,6 @@ const handleFileChange = async (event: any) => {
         bomParserStore.fileName = file.name
         bomParserStore.bomParserStatus = 'not'
         const bomData = await parseExcel(fileData)
-
         createParserJob(false, { name: file.name, itemList: bomData })
       })
       .catch((error) => {
@@ -88,6 +87,8 @@ const handleClear = () => {
   fileInput.value.value = '' // 清空文件输入的值
   bomParserStore.bomParserStatus = 'not'
   bomParserStore.fileName = ''
+  localStorage.removeItem('jobData')
+  channel.postMessage('parserJobStop')
   clearBomTableData()
 }
 </script>

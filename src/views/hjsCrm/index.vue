@@ -1,6 +1,5 @@
 <template>
   <div class="bom_parser_container">
-    <!-- <el-button type="primary" @click="createParserJob">触发查</el-button> -->
     <BomParserProgress
       v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0"
     />
@@ -27,17 +26,17 @@ const { bomId, token } = route.query as any
 
 onMounted(async () => {
   if (!bomId || !token) return
-
   bomParserStore.hjsCrm.token = token
   await getCrmData(bomId) // 获取crm数据
-  const { excelUrl, jobId, status, fileName } = bomParserStore.hjsCrm
+  const { excelUrl, status, fileName } = bomParserStore.hjsCrm
   if (excelUrl && status === '1') {
     createParserJob(true, {
       name: fileName,
       excelUrl: excelUrl
     })
-  } else if (jobId) {
-    getMaterialParserResult(jobId)
+  } else {
+    const jobId = bomParserStore.hjsCrm.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
+    if (jobId) await getMaterialParserResult(jobId as string)
   }
 })
 /*
