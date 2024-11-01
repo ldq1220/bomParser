@@ -25,7 +25,7 @@ export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
   try {
     bomParserStore.tableLoading = true
     bomParserStore.bomParserStatus = 'start'
-    const { data } = await reqCreateMaterialIdentifyJob(body)
+    const data = await reqCreateMaterialIdentifyJob(body)
     const { jobId, itemList, headerSeq, itemCnt } = data
     localStorage.setItem('jobData', JSON.stringify({ jobId, itemList, headerSeq, itemCnt }))
     bomParserStore.hjsCrm.jobId = jobId
@@ -45,7 +45,7 @@ export const getParserResult = async (jobId: string, itemCnt: number) => {
         jobId,
         startSeq
       } as any)
-      const { data: resData } = await reqGetMaterialIdentifyResult(params)
+      const resData = await reqGetMaterialIdentifyResult(params)
       startSeq = resData[resData.length - 1].seq
       const bomParserProgressDataIds = bomParserStore.bomParserProgressData.map((item) => item.id)
       resData.forEach((item) => {
@@ -82,9 +82,7 @@ export const getMaterialParserResult = async (jobId: string) => {
   try {
     clearBomTableData()
     bomParserStore.tableLoading = true
-    const {
-      data: { name, status }
-    } = await reqGetMaterialIdentifyJob(jobId)
+    const { name, status } = await reqGetMaterialIdentifyJob(jobId)
     bomParserStore.fileName = name
 
     if (status === 3) {
@@ -92,7 +90,7 @@ export const getMaterialParserResult = async (jobId: string) => {
         jobId,
         startSeq: 0
       } as any)
-      const { data } = await reqGetMaterialIdentifyResult(params)
+      const data = await reqGetMaterialIdentifyResult(params)
       bomParserStore.percentage = 100
       for (let i = 0; i < data.length; i++) {
         bomParserStore.bomParserTableData.push(data[i])
