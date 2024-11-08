@@ -9,3 +9,11 @@ export const getFileName = (url: string) => {
   if (!url) return ''
   return url.split('/').pop()
 }
+
+// 拼接规格值
+export const specValues = (spec: any) => {
+  const copySpec = JSON.parse(JSON.stringify(spec))
+  delete copySpec.package
+  return Object.values(copySpec).join(' ')
+  // .filter((value) => value && value !== '<UNKNOWN>')
+}

@@ -17,6 +17,12 @@ export default {
     rewrite: (path: string) => path.replace(/^\/shengfa/, '')
   },
 
+  '/jinlong': {
+    target: 'http://192.168.11.131:3000/api',
+    changeOrigin: true,
+    rewrite: (path: string) => path.replace(/^\/jinlong/, '')
+  },
+
   '/dianqi': {
     target: 'http://192.168.11.246:3000/api',
     changeOrigin: true,

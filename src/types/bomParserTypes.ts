@@ -16,7 +16,7 @@ export interface BomItem {
   manufacturer?: string[]
   part_number?: string
   quantity?: number
-  specification?: any
+  spec?: Spec
   matchedIcDatas?: MatchedIcItem[]
 }
 
@@ -33,11 +33,10 @@ export interface MatchedIcItem {
   deliveryDate?: string
 }
 
-export interface BomParserTaskResult {
-  code: number
-  result: {
-    bomUuid: string
-    bomName: string
-    bomItemList: BomItem[]
-  }
+export interface Spec {
+  package?: string
+  value?: string
+  tolerance?: string
+  power?: string
+  voltage?: string
 }

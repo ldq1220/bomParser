@@ -55,7 +55,8 @@
               <span class="label">参数：</span>
               <span>
                 {{
-                  `${row.spec.value ?? ''}${row.spec.unit ?? ''} ${row.spec.tolerance ?? ''} ${row.spec.power ?? ''}`
+                  // `${row.spec.value ?? ''} ${row.spec.tolerance ?? ''} ${row.spec.power ?? ''} ${row.spec.voltage ?? ''}`
+                  specValues(row.spec)
                 }}
               </span>
             </p>
@@ -98,7 +99,6 @@
                 ${row.matchedIcDatas[0].capacitance ?? ''}
                 ${row.matchedIcDatas[0].inductance ?? ''} 
                 ${row.matchedIcDatas[0].tolerance ?? ''}
-                ${row.matchedIcDatas[0].power ?? ''}
                 `
                 }}
               </span>
@@ -146,6 +146,7 @@ import TextTooltip from '@/components/textTooltip/index.vue'
 // import NP from "number-precision";
 import useBomParserStore from '@/store/bomParser'
 import changeMaterialDiaolg from '../changeMaterialDiaolg/index.vue'
+import { specValues } from '@/utils'
 
 const bomParserStore = useBomParserStore()
 const tableList = ref<BomItem[]>()
