@@ -27,7 +27,7 @@ const hasInit = ref(false)
 onMounted(() => {
   hasInit.value = true
   initialBomData.forEach((item) => {
-    bomParserStore.bomParserTableData.push(item)
+    bomParserStore.bomParserTableData.push(item as any)
   })
 })
 </script>

@@ -80,9 +80,16 @@ export const getParserResult = async (jobId: string, itemCnt: number) => {
 // 直接通过jobId 获取状态 判断状态 是进行中还是结束
 export const getMaterialParserResult = async (jobId: string) => {
   try {
-    clearBomTableData()
+    await clearBomTableData()
     bomParserStore.tableLoading = true
-    const { name, status } = await reqGetMaterialIdentifyJob(jobId)
+    const {
+      name,
+      status,
+      jobId: resultJobId,
+      itemList: resultItemList,
+      headerSeq: resultHeaderSeq,
+      itemCnt: resultItemCnt
+    } = await reqGetMaterialIdentifyJob(jobId)
     bomParserStore.fileName = name
 
     if (status === 3) {
@@ -97,6 +104,15 @@ export const getMaterialParserResult = async (jobId: string) => {
       }
     } else {
       bomParserStore.bomParserStatus = 'start'
+      localStorage.setItem(
+        'jobData',
+        JSON.stringify({
+          jobId: resultJobId,
+          itemList: resultItemList,
+          headerSeq: resultHeaderSeq,
+          itemCnt: resultItemCnt
+        })
+      )
       const { jobId, itemList, headerSeq, itemCnt } = JSON.parse(localStorage.getItem('jobData') || '{}')
       itemList.slice(headerSeq + 1).forEach((item: any[], index: number) => {
         bomParserStore.bomParserTableData.push({
@@ -112,7 +128,7 @@ export const getMaterialParserResult = async (jobId: string) => {
 }
 
 // 清空数据
-export const clearBomTableData = () => {
+export const clearBomTableData = async () => {
   bomParserStore.bomParserTableData = []
   bomParserStore.bomParserProgressData = []
   bomParserStore.percentage = 0

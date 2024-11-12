@@ -26,7 +26,7 @@ const parameterView = [
   { label: '容值', value: 'capacitance' },
   { label: '感值', value: 'inductance' },
   { label: '电压', value: 'voltage' },
-  { lable: '功率', value: 'power' }
+  { label: '功率', value: 'power' }
 ]
 </script>
 
