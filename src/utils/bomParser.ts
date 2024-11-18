@@ -24,9 +24,9 @@ interface CreateJobBody {
 export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
   try {
     bomParserStore.tableLoading = true
+    const { result } = await reqCreateMaterialIdentifyJob(body)
+    const { jobId, itemList, headerSeq, itemCnt } = result
     bomParserStore.bomParserStatus = 'start'
-    const data = await reqCreateMaterialIdentifyJob(body)
-    const { jobId, itemList, headerSeq, itemCnt } = data
     localStorage.setItem('jobData', JSON.stringify({ jobId, itemList, headerSeq, itemCnt }))
     bomParserStore.hjsCrm.jobId = jobId
     if (hasCrm) await updateCrmData() // 更新crm数据
@@ -45,7 +45,7 @@ export const getParserResult = async (jobId: string, itemCnt: number) => {
         jobId,
         startSeq
       } as any)
-      const resData = await reqGetMaterialIdentifyResult(params)
+      const { result: resData } = await reqGetMaterialIdentifyResult(params)
       startSeq = resData[resData.length - 1].seq
       const bomParserProgressDataIds = bomParserStore.bomParserProgressData.map((item) => item.id)
       resData.forEach((item) => {
@@ -83,12 +83,14 @@ export const getMaterialParserResult = async (jobId: string) => {
     await clearBomTableData()
     bomParserStore.tableLoading = true
     const {
-      name,
-      status,
-      jobId: resultJobId,
-      itemList: resultItemList,
-      headerSeq: resultHeaderSeq,
-      itemCnt: resultItemCnt
+      result: {
+        name,
+        status,
+        jobId: resultJobId,
+        itemList: resultItemList,
+        headerSeq: resultHeaderSeq,
+        itemCnt: resultItemCnt
+      }
     } = await reqGetMaterialIdentifyJob(jobId)
     bomParserStore.fileName = name
 
@@ -97,10 +99,10 @@ export const getMaterialParserResult = async (jobId: string) => {
         jobId,
         startSeq: 0
       } as any)
-      const data = await reqGetMaterialIdentifyResult(params)
+      const { result: resData } = await reqGetMaterialIdentifyResult(params)
       bomParserStore.percentage = 100
-      for (let i = 0; i < data.length; i++) {
-        bomParserStore.bomParserTableData.push(data[i])
+      for (let i = 0; i < resData.length; i++) {
+        bomParserStore.bomParserTableData.push(resData[i])
       }
     } else {
       bomParserStore.bomParserStatus = 'start'

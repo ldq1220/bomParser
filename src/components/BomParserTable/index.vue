@@ -134,7 +134,7 @@
       </el-table-column>
     </el-table>
 
-    <changeMaterialDiaolg v-model:visible="changeMaterialDiaolgVisible" :currentMaterial="currentMaterial" />
+    <ChangeMaterialDiaolg v-model:visible="changeMaterialDiaolgVisible" :currentMaterial="currentMaterial" />
   </div>
 </template>
 
@@ -142,10 +142,10 @@
 import { ref, watch } from 'vue'
 import { BomItem } from '@/types/bomParserTypes'
 import MoreParameterPopover from './moreParameterPopover.vue'
-import TextTooltip from '@/components/textTooltip/index.vue'
+import TextTooltip from '@/components/TextTooltip/index.vue'
 // import NP from "number-precision";
 import useBomParserStore from '@/store/bomParser'
-import changeMaterialDiaolg from '../changeMaterialDiaolg/index.vue'
+import ChangeMaterialDiaolg from '../ChangeMaterialDiaolg/index.vue'
 import { specValues } from '@/utils'
 
 const bomParserStore = useBomParserStore()

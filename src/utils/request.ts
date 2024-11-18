@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import useBomParserStore from '@/store/bomParser'
+
+const bomParserStore = useBomParserStore()
 
 let proxy = ''
 const env = import.meta.env.VITE_ENV
@@ -21,7 +24,8 @@ request.interceptors.request.use(
   async (config) => {
     // 配置请求头
     const authorization = ''
-
+    console.log('x-api-key', bomParserStore.xApiKey)
+    config.headers['x-api-key'] = bomParserStore.xApiKey
     // 验证token
     if (authorization) {
       config.headers.authorization = 'Bearer ' + authorization
@@ -48,6 +52,11 @@ request.interceptors.response.use(
     const { status } = e.response
     if (status === 401 || code === 'A0005') {
       ElMessage.error('登录已过期，请重新登录！')
+      return Promise.reject(e)
+    }
+
+    if (message == '没有权限操作') {
+      ElMessage.error('没有权限操作，请设置密钥🔐！')
       return Promise.reject(e)
     }
 

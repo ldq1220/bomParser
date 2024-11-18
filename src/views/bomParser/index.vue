@@ -5,6 +5,7 @@
     <BomParserProgress
       v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0"
     />
+    <BomAuth />
   </div>
 
   <BomParserTabs />
@@ -14,6 +15,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { initialBomData } from '@/constant/initialBomData'
+import BomAuth from '@/components/BomAuth/index.vue'
 import BomUpload from './components/bomUpload.vue'
 import DownloadBom from './components/downloadBom.vue'
 import BomParserProgress from '@/components/BomParserProgress/index.vue'

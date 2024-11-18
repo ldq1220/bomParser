@@ -32,6 +32,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
   const status2 = ref(0) // 部分匹配
   const status3 = ref(0) // 未匹配
   const status4 = ref(0) // 异常
+  const xApiKey = ref('') // 请求头x-api-key
 
   watch(
     () => bomParserTableData.value,
@@ -80,7 +81,8 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     status3,
     status1,
     status2,
-    status4
+    status4,
+    xApiKey
   }
 })
 
