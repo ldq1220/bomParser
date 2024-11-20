@@ -24,7 +24,6 @@ request.interceptors.request.use(
   async (config) => {
     // 配置请求头
     const authorization = ''
-    console.log('x-api-key', bomParserStore.xApiKey)
     config.headers['x-api-key'] = bomParserStore.xApiKey
     // 验证token
     if (authorization) {
@@ -55,8 +54,8 @@ request.interceptors.response.use(
       return Promise.reject(e)
     }
 
-    if (message == '没有权限操作') {
-      ElMessage.error('没有权限操作，请设置密钥🔐！')
+    if (message == '没有权限操作' || code === 'A0008') {
+      ElMessage.error('没有权限操作，请在右上角设置密钥🔐！')
       return Promise.reject(e)
     }
 

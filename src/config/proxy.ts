@@ -36,7 +36,7 @@ export default {
   },
 
   '/prod': {
-    target: 'https://gmab-api.we5.fun/api',
+    target: 'https://comm-api.gemelai.com/api',
     changeOrigin: true,
     rewrite: (path: string) => path.replace(/^\/prod/, '')
   }

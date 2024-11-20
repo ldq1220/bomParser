@@ -2,7 +2,7 @@
   <div class="bom_auth_container">
     <el-popover placement="top-start" :width="300" trigger="hover">
       <template #reference>
-        <img :src="bomParserStore.xApiKey ? Unlock : Lock" alt="lock" />
+        <img :src="bomParserStore.xApiKey ? Lock : Unlock" alt="lock" />
       </template>
 
       <el-input
