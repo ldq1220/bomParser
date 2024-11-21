@@ -30,7 +30,7 @@ onMounted(() => {
 })
 
 const setXApiKey = () => {
-  localStorage.setItem('xApiKey', bomParserStore.xApiKey)
+  bomParserStore.setXApiKey(bomParserStore.xApiKey)
   window.location.reload()
 }
 </script>

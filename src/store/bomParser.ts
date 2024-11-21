@@ -43,20 +43,6 @@ const useBomParserStore = defineStore('BomParserStore', () => {
         if (item.matchedIcDatas) {
           const length = item.matchedIcDatas?.length
           length > 0 ? status2.value++ : status3.value++
-          // switch (length > 0) {
-          //   case 3:
-          //   case undefined:
-          //     status3.value++;
-          //     break;
-          //   case 1:
-          //     status1.value++;
-          //     break;
-          //   case 2:
-          //     status2.value++;
-          //     break;
-          //   default:
-          //     break;
-          // }
         } else if (!item.matchedIcDatas && percentage.value === 100) {
           status4.value++
         }
@@ -67,6 +53,11 @@ const useBomParserStore = defineStore('BomParserStore', () => {
       deep: true
     }
   )
+
+  const setXApiKey = (value: string) => {
+    localStorage.setItem('xApiKey', value.trim())
+    xApiKey.value = value
+  }
 
   return {
     bomParserTableData,
@@ -82,7 +73,8 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     status1,
     status2,
     status4,
-    xApiKey
+    xApiKey,
+    setXApiKey
   }
 })
 

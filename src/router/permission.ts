@@ -9,7 +9,11 @@ enum xApiKey {
 // 全局前置守卫
 router.beforeEach(async (to, _from, next) => {
   const bomParserStore = useBomParserStore()
-  if (to.path === '/hjsCrm') bomParserStore.xApiKey = xApiKey.HJS
+  const { path, query } = to
+  let xapikey = ''
+  if (query.apikey) xapikey = query.apikey as string
+  if (path === '/hjsCrm') xapikey = xApiKey.HJS
+  if (xapikey) bomParserStore.setXApiKey(xapikey)
 
   next()
 })
