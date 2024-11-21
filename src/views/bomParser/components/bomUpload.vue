@@ -10,18 +10,21 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { read, utils } from 'xlsx'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import useBomParserStore from '@/store/bomParser'
 import { BroadcastChannel } from 'broadcast-channel'
 import { createParserJob, getMaterialParserResult, clearBomTableData } from '@/utils/bomParser'
 
 const bomParserStore = useBomParserStore()
 const route = useRoute()
+const router = useRouter()
 const channel = new BroadcastChannel('parserJob')
 
 onMounted(async () => {
   const jobId = route.query.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
   if (jobId) await getMaterialParserResult(jobId as string)
+
+  if (route.query.jobId && route.path !== '/hjsCrm') router.replace({ path: '/' }) // 如果存在jobId，则重定向到根路径
 })
 
 const fileInput = ref()

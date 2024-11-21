@@ -26,6 +26,7 @@ const copyResultUrl = async () => {
   try {
     const { toClipboard } = useClipboard()
     const jobData = localStorage.getItem('jobData') as string
+    if (!jobData) return ElMessage.warning('暂无解析任务可分享，请上传BOM表。')
     const jobId = JSON.parse(jobData).jobId
     await toClipboard(`${window.location.origin}?jobId=${jobId}`)
     ElMessage.success('解析结果分享链接已复制到剪贴板。')

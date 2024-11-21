@@ -92,6 +92,11 @@ export const getMaterialParserResult = async (jobId: string) => {
         itemCnt: resultItemCnt
       }
     } = await reqGetMaterialIdentifyJob(jobId)
+    localStorage.removeItem('jobData')
+    localStorage.setItem(
+      'jobData',
+      JSON.stringify({ jobId, itemList: resultItemList, headerSeq: resultHeaderSeq, itemCnt: resultItemCnt })
+    )
     bomParserStore.fileName = name
 
     if (status === 3) {
