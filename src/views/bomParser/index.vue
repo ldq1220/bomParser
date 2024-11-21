@@ -5,7 +5,7 @@
     <BomParserProgress
       v-show="bomParserStore.bomParserStatus !== 'not' || bomParserStore.bomParserTableData.length !== 0"
     />
-    <BomAuth />
+    <OperationGroup />
   </div>
 
   <BomParserTabs />
@@ -15,12 +15,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { initialBomData } from '@/constant/initialBomData'
-import BomAuth from '@/components/BomAuth/index.vue'
 import BomUpload from './components/bomUpload.vue'
 import DownloadBom from './components/downloadBom.vue'
 import BomParserProgress from '@/components/BomParserProgress/index.vue'
 import BomParserTable from '@/components/BomParserTable/index.vue'
 import BomParserTabs from '@/components/BomParserTabs/index.vue'
+import OperationGroup from '@/components/OperationGroup/index.vue'
 import useBomParserStore from '@/store/bomParser'
 
 const bomParserStore = useBomParserStore()
@@ -40,5 +40,6 @@ onMounted(() => {
   margin: 40px auto;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
 }
 </style>
