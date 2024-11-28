@@ -12,6 +12,7 @@ interface hjsCrm {
 }
 
 const useBomParserStore = defineStore('BomParserStore', () => {
+  const itemList = ref([])
   const bomParserTableData = ref<BomItem[]>([])
   const bomParserProgressData = ref<BomItem[]>([])
   const bomParserStatus = ref('end') // not start end
@@ -28,23 +29,54 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     fileName: '',
     token: '' // nocobase token
   })
-  const status1 = ref(0) // 完全匹配
-  const status2 = ref(0) // 部分匹配
-  const status3 = ref(0) // 未匹配
-  const status4 = ref(0) // 异常
+  const perfectMatch = ref(0) // 完全匹配
+  const toBeConfirmed = ref(0) // 待确认
+  const unmatch = ref(0) // 未匹配
+  const abnormal = ref(0) // 异常
   const xApiKey = ref('') // 请求头x-api-key
+
+  // 对比异常数据
+  const syncBomParserData = () => {
+    const materialMap = new Map(bomParserTableData.value.map((material) => [material.seq, material]))
+
+    const items = itemList.value.slice(1)
+    items.forEach((item: any) => {
+      const seq = item[0]
+      if (!materialMap.has(seq)) {
+        const newMaterial: BomItem = {
+          seq: seq,
+          matchStatus: 3, // 设置为未匹配状态
+          original_demand: item.slice(1).join(' ')
+        }
+
+        let insertIndex = bomParserTableData.value.findIndex((material) => material.seq && material.seq > seq)
+        if (insertIndex === -1) insertIndex = bomParserTableData.value.length
+
+        bomParserTableData.value.splice(insertIndex, 0, newMaterial)
+      }
+    })
+  }
 
   watch(
     () => bomParserTableData.value,
     () => {
-      status1.value = status2.value = status3.value = status4.value = 0
-
+      perfectMatch.value = toBeConfirmed.value = unmatch.value = abnormal.value = 0
+      syncBomParserData() // 对比异常数据
       bomParserTableData.value.forEach((item: BomItem) => {
-        if (item.matchedIcDatas) {
-          const length = item.matchedIcDatas?.length
-          length > 0 ? status2.value++ : status3.value++
-        } else if (!item.matchedIcDatas && percentage.value === 100) {
-          status4.value++
+        // 0: 未匹配 1: 待确认 2: 完全匹配 3: 异常
+        switch (item.matchStatus) {
+          case 0:
+            unmatch.value++
+            break
+          case 1:
+            toBeConfirmed.value++
+            break
+          case 2:
+            perfectMatch.value++
+            break
+          case 3:
+            abnormal.value++
+            break
         }
       })
     },
@@ -60,6 +92,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
   }
 
   return {
+    itemList,
     bomParserTableData,
     bomParserProgressData,
     bomParserStatus,
@@ -69,11 +102,12 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     currentTabLabel,
     tableLoading,
     hjsCrm,
-    status3,
-    status1,
-    status2,
-    status4,
+    unmatch,
+    perfectMatch,
+    toBeConfirmed,
+    abnormal,
     xApiKey,
+    syncBomParserData,
     setXApiKey
   }
 })

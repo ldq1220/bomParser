@@ -98,6 +98,7 @@ export const getMaterialParserResult = async (jobId: string) => {
       JSON.stringify({ jobId, itemList: resultItemList, headerSeq: resultHeaderSeq, itemCnt: resultItemCnt })
     )
     bomParserStore.fileName = name
+    bomParserStore.itemList = resultItemList
 
     if (status === 3) {
       const params = new URLSearchParams({

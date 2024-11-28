@@ -145,7 +145,6 @@ import { ref, watch } from 'vue'
 import { BomItem } from '@/types/bomParserTypes'
 import MoreParameterPopover from './moreParameterPopover.vue'
 import TextTooltip from '@/components/TextTooltip/index.vue'
-// import NP from "number-precision";
 import useBomParserStore from '@/store/bomParser'
 import ChangeMaterialDiaolg from '../ChangeMaterialDiaolg/index.vue'
 import { specValues } from '@/utils'
@@ -155,24 +154,24 @@ const tableList = ref<BomItem[]>()
 const changeMaterialDiaolgVisible = ref(false)
 const currentMaterial = ref<BomItem>({})
 
-const filterTableList = (status: number) => {
+const filterTableList = (status: string) => {
   const data = bomParserStore.bomParserTableData
 
   switch (status) {
-    case 0:
+    case 'all':
       tableList.value = data
       break
-    case 1:
-      tableList.value = []
+    case 'perfectMatch': // 完全匹配
+      tableList.value = data.filter((item: BomItem) => item.matchStatus === 2)
       break
-    case 2:
-      tableList.value = data.filter((item: BomItem) => item.matchedIcDatas?.[0])
+    case 'toBeConfirmed': // 待确认
+      tableList.value = data.filter((item: BomItem) => item.matchStatus === 1)
       break
-    case 3:
-      tableList.value = data.filter((item: BomItem) => item.matchedIcDatas?.length === 0)
+    case 'unmatch': // 未匹配
+      tableList.value = data.filter((item: BomItem) => item.matchStatus === 0)
       break
-    case 4:
-      tableList.value = data.filter((item: BomItem) => !item.matchedIcDatas)
+    case 'abnormal':
+      tableList.value = data.filter((item: BomItem) => item.matchStatus === 3)
       break
     default:
       tableList.value = []
@@ -184,11 +183,11 @@ watch(
   () => [bomParserStore.currentTabLabel, bomParserStore.percentage, bomParserStore.bomParserStatus],
   () => {
     const tabLabelToFilterMap = {
-      ['全部']: 0,
-      ['完全匹配']: 1,
-      ['待确认']: 2,
-      ['未匹配']: 3,
-      ['异常']: 4
+      ['全部']: 'all',
+      ['完全匹配']: 'perfectMatch',
+      ['待确认']: 'toBeConfirmed',
+      ['未匹配']: 'unmatch',
+      ['异常']: 'abnormal'
     }
 
     filterTableList(tabLabelToFilterMap[bomParserStore.currentTabLabel])
@@ -200,22 +199,34 @@ watch(
 )
 
 const getResultTagType = (row: BomItem) => {
-  const { matchedIcDatas: M } = row
-  if (hasMatchedMaterial(row)) return (M as Array<{ status: number }>)[0] ? 'primary' : ''
-  if (M && M.length === 0) return 'danger'
-  if (!M && bomParserStore.percentage === 100) return 'warning'
-  return ''
+  const { matchStatus } = row
+  switch (matchStatus) {
+    case 0:
+      return 'warning'
+    case 1:
+      return 'primary'
+    case 2:
+      return 'success'
+    case 3:
+      return 'danger'
+  }
 }
 
 const getResultTagText = (row: BomItem) => {
-  const { matchedIcDatas: M } = row
-  if (hasMatchedMaterial(row)) return (M as Array<{ status: number }>)[0] ? '待确认' : ''
-  if (M && M.length === 0) return '未匹配'
-  if (!M && bomParserStore.percentage === 100) return '异常'
-  return ''
+  const { matchStatus } = row
+  switch (matchStatus) {
+    case 0:
+      return '未匹配'
+    case 1:
+      return '待确认'
+    case 2:
+      return '完全匹配'
+    case 3:
+      return '异常'
+  }
 }
 
-const hasMatchedMaterial = (row: BomItem) => row.matchedIcDatas && row.matchedIcDatas.length > 0
+const hasMatchedMaterial = (row: BomItem) => row.matchedIcDatas?.[0]?.idCode
 
 const changeMaterial = (row: BomItem) => {
   changeMaterialDiaolgVisible.value = true

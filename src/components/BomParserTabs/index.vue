@@ -35,22 +35,22 @@ const parserResultTabs = ref<ParserResultTabs[]>([
   },
   {
     label: '完全匹配',
-    number: computed(() => bomParserStore.status1),
+    number: computed(() => bomParserStore.perfectMatch),
     active: false
   },
   {
     label: '待确认',
-    number: computed(() => bomParserStore.status2),
+    number: computed(() => bomParserStore.toBeConfirmed),
     active: false
   },
   {
     label: '未匹配',
-    number: computed(() => bomParserStore.status3),
+    number: computed(() => bomParserStore.unmatch),
     active: false
   },
   {
     label: '异常',
-    number: computed(() => bomParserStore.status4),
+    number: computed(() => bomParserStore.abnormal),
     active: false
   }
 ])

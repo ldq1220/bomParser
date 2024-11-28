@@ -18,9 +18,11 @@ export interface BomItem {
   quantity?: number
   spec?: Spec
   matchedIcDatas?: MatchedIcItem[]
+  matchStatus?: number // 0: 未匹配 1: 待确认 2: 完全匹配
 }
 
 export interface MatchedIcItem {
+  idCode?: string
   status?: number
   productName?: string
   productModel?: string
