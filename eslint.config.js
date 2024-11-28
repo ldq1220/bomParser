@@ -4,6 +4,9 @@ import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 
 export default [
+  {
+    ignores: ['dist/**', 'node_modules/**', '*.min.js', 'coverage/**']
+  },
   { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   { files: ['**/*.js'], languageOptions: { sourceType: 'commonjs' } },
   { languageOptions: { globals: globals.browser } },

@@ -1,7 +1,8 @@
 import request from '@/utils/request'
 
 enum API {
-  MATERIAL_IDENTIFY_JOB = '/material/identify-job'
+  MATERIAL_IDENTIFY_JOB = '/material/identify-job',
+  MATERIAL_IDENTIFY_RESULTS = '/material/identify-results'
 }
 
 // 新增一个识别非标物料的任务
@@ -16,3 +17,11 @@ export const reqGetMaterialIdentifyResult = (params: URLSearchParams) =>
 
 // 定时检查物料识别任务进度 （未开始 ==> 进行中 ==> 已完成）
 export const reqCheckMaterialIdentifyJob = () => request.post(`${API.MATERIAL_IDENTIFY_JOB}/check`)
+
+// 获取该条物料相似的数据
+export const reqGetMaterialSimilarData = (id: number | undefined) =>
+  request.get(`${API.MATERIAL_IDENTIFY_RESULTS}/${id}/recommand?`)
+
+// 更换物料
+export const reqChangeMaterial = (id: number | undefined, md5No: string) =>
+  request.patch(`${API.MATERIAL_IDENTIFY_RESULTS}/${id}`, { md5No })

@@ -119,22 +119,24 @@
         </template>
       </el-table-column>
       <el-table-column prop="" label="小计（含税）" class-name="column_result" min-width="100">
-        <template #default="">
-          <!-- <span v-if="hasMatchedMaterial(row)">
-              ￥{{ NP.times(1.1, row.quantity) }}</span
-            > -->
-        </template>
+        <template #default=""></template>
       </el-table-column>
       <el-table-column prop="" label="操作" fixed="right" class-name="column_result" width="120">
         <template #default="{ row }">
           <div class="btns" v-if="bomParserStore.percentage === 100">
-            <el-button type="primary" size="small" @click="changeMaterial(row)">更换物料</el-button>
+            <el-button type="primary" size="small" @click="changeMaterial(row)" v-if="row.matchedIcDatas?.[0]?.idCode">
+              更换物料
+            </el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
 
-    <ChangeMaterialDiaolg v-model:visible="changeMaterialDiaolgVisible" :currentMaterial="currentMaterial" />
+    <ChangeMaterialDiaolg
+      v-model:visible="changeMaterialDiaolgVisible"
+      :currentMaterial="currentMaterial"
+      @handleChangeMaterial="handleChangeMaterial"
+    />
   </div>
 </template>
 
@@ -218,6 +220,12 @@ const hasMatchedMaterial = (row: BomItem) => row.matchedIcDatas && row.matchedIc
 const changeMaterial = (row: BomItem) => {
   changeMaterialDiaolgVisible.value = true
   currentMaterial.value = row
+}
+
+// 前端处理更换物料
+const handleChangeMaterial = async (id: number, materialInfo: any) => {
+  const currentChangeMaterial = tableList.value?.find((item) => item.id === id)
+  if (currentChangeMaterial) currentChangeMaterial.matchedIcDatas = [materialInfo]
 }
 </script>
 

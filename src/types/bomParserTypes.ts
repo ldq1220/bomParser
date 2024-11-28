@@ -31,6 +31,7 @@ export interface MatchedIcItem {
   price?: number
   validStockNumber?: string
   deliveryDate?: string
+  md5No?: string
 }
 
 export interface Spec {
