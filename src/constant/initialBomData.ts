@@ -2,7 +2,6 @@ export const initialBomData = [
   {
     id: 1,
     seq: 1,
-    // original_demand: '0603 5% 330R 1/10W',
     original_demand:
       '0603 5% 330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R  330R 1/10W',
     category_1: '电阻',
@@ -17,6 +16,7 @@ export const initialBomData = [
       tolerance: '5%',
       power: '1/10W'
     },
+    matchStatus: 2,
     matchedIcDatas: [
       {
         status: 2,
@@ -48,6 +48,7 @@ export const initialBomData = [
       tolerance: '5%',
       power: '1/16W'
     },
+    matchStatus: 1,
     matchedIcDatas: [
       {
         status: 1,
@@ -78,11 +79,14 @@ export const initialBomData = [
       unit: 'Ω',
       tolerance: '1%'
     },
+    matchStatus: 0,
     matchedIcDatas: []
   },
   {
     id: 3,
     seq: 3,
-    original_demand: '0402 2.2K/+-1%'
+    original_demand: '0402 2.2K/+-1%',
+    matchStatus: 3,
+    matchedIcDatas: []
   }
 ]
