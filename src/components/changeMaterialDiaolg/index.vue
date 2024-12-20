@@ -16,6 +16,13 @@
       <el-table-column label="编码" prop="idCode" fixed="left" />
       <el-table-column label="品牌" prop="manufacturer" />
       <el-table-column label="封装" prop="package" width="100" />
+      <el-table-column label="单价" width="100">
+        <template #default="{ row }">
+          <span style="color: #ff4a4b" v-if="row.price?.[0]?.unitPrice">￥{{ row.price?.[0]?.unitPrice }}</span>
+          <span v-else>暂无</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="其他规格">
         <template #default="{ row }">
           {{ specValues(row) }}

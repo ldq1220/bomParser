@@ -41,7 +41,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
 
     const items = itemList.value.slice(1)
     items.forEach((item: any) => {
-      const seq = item[0]
+      const seq = Number(item[0])
       if (!materialMap.has(seq)) {
         const newMaterial: BomItem = {
           seq: seq,

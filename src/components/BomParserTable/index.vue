@@ -54,10 +54,7 @@
             <p>
               <span class="label">参数：</span>
               <span>
-                {{
-                  // `${row.spec.value ?? ''} ${row.spec.tolerance ?? ''} ${row.spec.power ?? ''} ${row.spec.voltage ?? ''}`
-                  specValues(row.spec)
-                }}
+                {{ specValues(row.spec) }}
               </span>
             </p>
           </div>
@@ -113,13 +110,27 @@
           <el-input v-model="row.quantity" placeholder="" clearable v-if="hasMatchedMaterial(row)" />
         </template>
       </el-table-column>
-      <el-table-column prop="" label="价格" class-name="column_result" min-width="100">
+      <el-table-column prop="" label="单价" class-name="column_result" min-width="100" align="center">
         <template #default="{ row }">
-          <div v-if="hasMatchedMaterial(row)"></div>
+          <div v-if="hasMatchedMaterial(row)">
+            <el-input
+              v-model="row.matchedIcDatas[0].price[0].unitPrice"
+              placeholder=""
+              clearable
+              v-if="row.matchedIcDatas?.[0]?.price?.[0]?.unitPrice"
+            />
+            <span v-else>暂无</span>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="小计（含税）" class-name="column_result" min-width="100">
-        <template #default=""></template>
+      <el-table-column prop="" label="小计" class-name="column_result" min-width="80" align="center">
+        <template #default="{ row }">
+          <span v-if="row.quantity && row.matchedIcDatas?.[0]?.price?.[0]?.unitPrice">
+            <span style="color: #ff4a4b">
+              ￥{{ NP.times(row.quantity, row.matchedIcDatas?.[0]?.price?.[0]?.unitPrice) }}
+            </span>
+          </span>
+        </template>
       </el-table-column>
       <el-table-column prop="" label="操作" fixed="right" class-name="column_result" width="120">
         <template #default="{ row }">
@@ -148,6 +159,7 @@ import TextTooltip from '@/components/TextTooltip/index.vue'
 import useBomParserStore from '@/store/bomParser'
 import ChangeMaterialDiaolg from '../ChangeMaterialDiaolg/index.vue'
 import { specValues } from '@/utils'
+import NP from 'number-precision'
 
 const bomParserStore = useBomParserStore()
 const tableList = ref<BomItem[]>()
