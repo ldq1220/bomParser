@@ -35,7 +35,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "*.ts",
-    "src/views/hjsCrm/components/bomParservue"
+    "src/views/externalCrm/components/bomParservue"
   ]
   // "references": [
   //     {

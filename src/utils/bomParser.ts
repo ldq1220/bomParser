@@ -1,5 +1,5 @@
 import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult, reqGetMaterialIdentifyJob } from '@/api/bomParser'
-import { updateCrmData } from '@/views/hjsCrm/api/updateCrmData'
+import { updateCrmData } from '@/views/externalCrm/api/updateCrmData'
 import { BroadcastChannel } from 'broadcast-channel'
 import useBomParserStore from '@/store/bomParser'
 import NP from 'number-precision'
@@ -28,7 +28,7 @@ export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
     const { jobId, itemList, headerSeq, itemCnt } = result
     bomParserStore.bomParserStatus = 'start'
     localStorage.setItem('jobData', JSON.stringify({ jobId, itemList, headerSeq, itemCnt }))
-    bomParserStore.hjsCrm.jobId = jobId
+    bomParserStore.externalCrm.jobId = jobId
     if (hasCrm) await updateCrmData() // 更新crm数据
     getMaterialParserResult(jobId)
   } finally {

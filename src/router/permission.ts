@@ -12,7 +12,7 @@ router.beforeEach(async (to, _from, next) => {
   const { path, query } = to
   let xapikey = ''
   if (query.apikey) xapikey = query.apikey as string
-  if (path === '/hjsCrm') xapikey = xApiKey.HJS
+  if (path === '/externalCrm') xapikey = xApiKey.HJS
   if (xapikey) bomParserStore.setXApiKey(xapikey)
 
   next()

@@ -22,29 +22,29 @@ import { createParserJob, getMaterialParserResult } from '@/utils/bomParser'
 
 const bomParserStore = useBomParserStore()
 const route = useRoute()
-const { bomId, token } = route.query as any
+const { bomId, token, apiUrl } = route.query as any
 
 onMounted(async () => {
-  if (!bomId || !token) return
-  bomParserStore.hjsCrm.token = token
+  if (!bomId || !token || !apiUrl) return
+  bomParserStore.externalCrm.token = token
+  bomParserStore.externalCrm.apiUrl = apiUrl
   await getCrmData(bomId) // 获取crm数据
-  const { excelUrl, status, fileName } = bomParserStore.hjsCrm
+  const { excelUrl, status, fileName } = bomParserStore.externalCrm
   if (excelUrl && status === '1') {
     createParserJob(true, {
       name: fileName,
       excelUrl: excelUrl
     })
   } else {
-    const jobId = bomParserStore.hjsCrm.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
+    const jobId = bomParserStore.externalCrm.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
     if (jobId) await getMaterialParserResult(jobId as string)
   }
 })
 /*
 bomId：crm数据id   1
 token: crm token
+apiUrl: crm api url  如：http://192.168.11.246:13000/api/bom_list
 */
-
-/** http://192.168.11.246:5188/hjsCrm?bomId=2&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcyOTAzOTQ4NSwiZXhwIjoxNzI5NjQ0Mjg1fQ.S48KWMOlJfq91S8eLu-L33i3NYrzRMb88ELp97NjWUQ */
 </script>
 
 <style lang="scss" scoped>

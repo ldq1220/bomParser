@@ -42,8 +42,14 @@ const proxyMonitoring = () => {
 const addEventListener = () => {
   if (window.top !== window.self) {
     // 页面被嵌套在 iframe 中
-    const allowedOrigins = ['https://hjs.we5.fun/', 'http://localhost:13000/', 'http://192.168.11.246:13000/']
+    const allowedOrigins = [
+      'https://hjs.we5.fun/',
+      'https://ic.we5.fun/',
+      'http://localhost:13000/',
+      'http://192.168.11.246:13000/'
+    ]
     const iframeOrigin = document.referrer
+    console.log('iframeOrigin', iframeOrigin)
     if (!allowedOrigins.includes(iframeOrigin)) {
       alert('嵌入来源不允许')
       if (window.top) window.top.location = 'https://www.yingxiaoli.com' // 跳走

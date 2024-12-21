@@ -24,7 +24,7 @@ onMounted(async () => {
   const jobId = route.query.jobId || JSON.parse(localStorage.getItem('jobData') || '{}').jobId
   if (jobId) await getMaterialParserResult(jobId as string)
 
-  if (route.query.jobId && route.path !== '/hjsCrm') router.replace({ path: '/' }) // 如果存在jobId，则重定向到根路径
+  if (route.query.jobId && route.path !== '/externalCrm') router.replace({ path: '/' }) // 如果存在jobId，则重定向到根路径
 })
 
 const fileInput = ref()

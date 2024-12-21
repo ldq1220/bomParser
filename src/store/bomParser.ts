@@ -2,13 +2,14 @@ import { defineStore } from 'pinia'
 import { reactive, ref, watch } from 'vue'
 import { BomItem } from '@/types/bomParserTypes'
 
-interface hjsCrm {
+interface externalCrm {
   bomId: number | undefined
   jobId: string
   status: string | undefined
   excelUrl: string
   fileName: string
   token: string // nocobase token
+  apiUrl: string
 }
 
 const useBomParserStore = defineStore('BomParserStore', () => {
@@ -21,13 +22,14 @@ const useBomParserStore = defineStore('BomParserStore', () => {
   const bomParserUuid = ref()
   const currentTabLabel = ref('全部')
   const tableLoading = ref(false)
-  const hjsCrm: hjsCrm = reactive({
+  const externalCrm: externalCrm = reactive({
     bomId: undefined,
     jobId: '',
     status: undefined,
     excelUrl: '',
     fileName: '',
-    token: '' // nocobase token
+    token: '', // nocobase token
+    apiUrl: ''
   })
   const perfectMatch = ref(0) // 完全匹配
   const toBeConfirmed = ref(0) // 待确认
@@ -42,6 +44,8 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     const items = itemList.value.slice(1)
     items.forEach((item: any) => {
       const seq = Number(item[0])
+      console.log('item', item) // 这里 Number(item[0]) 为什么没有补上seq  需要问一下后端
+      console.log('seq', seq)
       if (!materialMap.has(seq)) {
         const newMaterial: BomItem = {
           seq: seq,
@@ -61,7 +65,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     () => bomParserTableData.value,
     () => {
       perfectMatch.value = toBeConfirmed.value = unmatch.value = abnormal.value = 0
-      syncBomParserData() // 对比异常数据
+      // syncBomParserData() // 对比异常数据
       bomParserTableData.value.forEach((item: BomItem) => {
         // 0: 未匹配 1: 待确认 2: 完全匹配 3: 异常
         switch (item.matchStatus) {
@@ -101,7 +105,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     bomParserUuid,
     currentTabLabel,
     tableLoading,
-    hjsCrm,
+    externalCrm,
     unmatch,
     perfectMatch,
     toBeConfirmed,

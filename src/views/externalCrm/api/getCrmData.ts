@@ -4,14 +4,12 @@ import useBomParserStore from '@/store/bomParser'
 
 const bomParserStore = useBomParserStore()
 
-export const getCrmData = async (filterByTk) => {
-  const { token } = bomParserStore.hjsCrm
+export const getCrmData = async (filterByTk: string) => {
+  const { token, apiUrl } = bomParserStore.externalCrm
 
   try {
-    const baseUrl = import.meta.env.VITE_NOCOURL
-
     const res = await axios({
-      url: `${baseUrl}/bom_list:get?filterByTk=${filterByTk}`,
+      url: `${apiUrl}:get?filterByTk=${filterByTk}`,
       method: 'GET',
       headers: {
         authorization: `Bearer ${token}`
@@ -20,7 +18,7 @@ export const getCrmData = async (filterByTk) => {
 
     const { id, file_url, bom_status, job_id } = res.data.data
     bomParserStore.fileName = getFileName(file_url as string)
-    Object.assign(bomParserStore.hjsCrm, {
+    Object.assign(bomParserStore.externalCrm, {
       bomId: id,
       excelUrl: file_url,
       jobId: job_id,

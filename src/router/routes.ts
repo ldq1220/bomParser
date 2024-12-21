@@ -6,9 +6,9 @@ export const constantRoute = [
     component: () => import('@/views/bomParser/index.vue')
   },
   {
-    path: '/hjsCrm',
-    name: 'hjsCrm',
-    component: () => import('@/views/hjsCrm/index.vue')
+    path: '/externalCrm',
+    name: 'externalCrm',
+    component: () => import('@/views/externalCrm/index.vue')
   },
   {
     path: '/404',
