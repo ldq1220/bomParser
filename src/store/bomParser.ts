@@ -14,6 +14,7 @@ interface externalCrm {
 
 const useBomParserStore = defineStore('BomParserStore', () => {
   const itemList = ref([])
+  const headerSeq = ref()
   const bomParserTableData = ref<BomItem[]>([])
   const bomParserProgressData = ref<BomItem[]>([])
   const bomParserStatus = ref('end') // not start end
@@ -41,19 +42,17 @@ const useBomParserStore = defineStore('BomParserStore', () => {
   const syncBomParserData = () => {
     const materialMap = new Map(bomParserTableData.value.map((material) => [material.seq, material]))
 
-    const items = itemList.value.slice(1)
-    items.forEach((item: any) => {
-      const seq = Number(item[0])
-      console.log('item', item) // 这里 Number(item[0]) 为什么没有补上seq  需要问一下后端
-      console.log('seq', seq)
-      if (!materialMap.has(seq)) {
+    const items = itemList.value.slice(headerSeq.value + 1)
+    items.forEach((item: any, index: number) => {
+      const itemSeq = index + 1
+      if (!materialMap.has(itemSeq)) {
         const newMaterial: BomItem = {
-          seq: seq,
+          seq: itemSeq,
           matchStatus: 3, // 设置为未匹配状态
-          original_demand: item.slice(1).join(' ')
+          original_demand: item.join(' ')
         }
 
-        let insertIndex = bomParserTableData.value.findIndex((material) => material.seq && material.seq > seq)
+        let insertIndex = bomParserTableData.value.findIndex((material) => material.seq && material.seq > itemSeq)
         if (insertIndex === -1) insertIndex = bomParserTableData.value.length
 
         bomParserTableData.value.splice(insertIndex, 0, newMaterial)
@@ -65,7 +64,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     () => bomParserTableData.value,
     () => {
       perfectMatch.value = toBeConfirmed.value = unmatch.value = abnormal.value = 0
-      // syncBomParserData() // 对比异常数据
+      syncBomParserData() // 对比异常数据
       bomParserTableData.value.forEach((item: BomItem) => {
         // 0: 未匹配 1: 待确认 2: 完全匹配 3: 异常
         switch (item.matchStatus) {
@@ -97,6 +96,7 @@ const useBomParserStore = defineStore('BomParserStore', () => {
 
   return {
     itemList,
+    headerSeq,
     bomParserTableData,
     bomParserProgressData,
     bomParserStatus,
