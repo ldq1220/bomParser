@@ -40,7 +40,7 @@ const handleFileChange = async (event: any) => {
         bomParserStore.fileName = file.name
         bomParserStore.bomParserStatus = 'not'
         const bomData = await parseExcel(fileData)
-        createParserJob(false, { name: file.name, itemList: bomData })
+        createParserJob(false, 'v1', { name: file.name, itemList: bomData })
       })
       .catch((error) => {
         console.error('Error reading or parsing file:', error)

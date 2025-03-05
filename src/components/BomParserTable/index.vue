@@ -36,7 +36,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="整理后需求" min-width="200px" fixed="left">
+      <el-table-column prop="" label="整理后需求" min-width="200px" fixed="left" v-if="notV2">
         <template #default="{ row }">
           <div class="" v-if="row.spec">
             <p>
@@ -60,7 +60,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="需求量" fixed="left">
+      <el-table-column prop="" label="需求量" fixed="left" v-if="notV2">
         <template #default="{ row }">
           <div class="" v-if="row.spec">{{ row.quantity }}</div>
         </template>
@@ -72,7 +72,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="推荐匹配商品" class-name="column_result" min-width="200">
+      <el-table-column label="推荐匹配商品" class-name="column_result " min-width="200">
         <template #default="{ row }">
           <div class="product_info" v-if="hasMatchedMaterial(row)">
             <div class="product_info_item">
@@ -105,12 +105,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="" label="购买数量" class-name="column_result" min-width="100">
+      <el-table-column prop="" label="购买数量" class-name="column_result" min-width="100" v-if="notV2">
         <template #default="{ row }">
           <el-input v-model="row.quantity" placeholder="" clearable v-if="hasMatchedMaterial(row)" />
         </template>
       </el-table-column>
-      <el-table-column prop="" label="单价" class-name="column_result" min-width="100" align="center">
+      <el-table-column prop="" label="单价" class-name="column_result" min-width="100" align="center" v-if="notV2">
         <template #default="{ row }">
           <div v-if="hasMatchedMaterial(row)">
             <el-input
@@ -123,7 +123,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="小计" class-name="column_result" min-width="80" align="center">
+      <el-table-column prop="" label="小计" class-name="column_result" min-width="80" align="center" v-if="notV2">
         <template #default="{ row }">
           <span v-if="row.quantity && row.matchedIcDatas?.[0]?.price?.[0]?.unitPrice">
             <span style="color: #ff4a4b">
@@ -132,7 +132,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="操作" fixed="right" class-name="column_result" width="120">
+      <el-table-column prop="" label="操作" fixed="right" class-name="column_result" width="120" v-if="notV2">
         <template #default="{ row }">
           <div class="btns" v-if="bomParserStore.percentage === 100">
             <el-button type="primary" size="small" @click="changeMaterial(row)" v-if="row.matchedIcDatas?.[0]?.idCode">
@@ -160,6 +160,10 @@ import useBomParserStore from '@/store/bomParser'
 import ChangeMaterialDiaolg from '../ChangeMaterialDiaolg/index.vue'
 import { specValues } from '@/utils'
 import NP from 'number-precision'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const notV2 = ref(route.path !== '/v2')
 
 const bomParserStore = useBomParserStore()
 const tableList = ref<BomItem[]>()

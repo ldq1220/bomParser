@@ -28,7 +28,7 @@ const copyResultUrl = async () => {
     const jobData = localStorage.getItem('jobData') as string
     if (!jobData) return ElMessage.warning('暂无解析任务可分享，请上传BOM表。')
     const jobId = JSON.parse(jobData).jobId
-    await toClipboard(`${window.location.origin}?jobId=${jobId}`)
+    await toClipboard(`${window.location.href}?jobId=${jobId}`)
     ElMessage.success('已复制分享链接。')
   } catch (e: any) {
     ElMessage.error('复制失败', e)

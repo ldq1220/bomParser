@@ -41,8 +41,8 @@ const useBomParserStore = defineStore('BomParserStore', () => {
   // 对比异常数据
   const syncBomParserData = () => {
     const materialMap = new Map(bomParserTableData.value.map((material) => [material.seq, material]))
-
     const items = itemList.value.slice(headerSeq.value + 1)
+
     items.forEach((item: any, index: number) => {
       const itemSeq = index + 1
       if (!materialMap.has(itemSeq)) {
@@ -64,7 +64,10 @@ const useBomParserStore = defineStore('BomParserStore', () => {
     () => bomParserTableData.value,
     () => {
       perfectMatch.value = toBeConfirmed.value = unmatch.value = abnormal.value = 0
-      syncBomParserData() // 对比异常数据
+      if (bomParserTableData.value.length !== 0) {
+        syncBomParserData() // 对比异常数据
+      }
+
       bomParserTableData.value.forEach((item: BomItem) => {
         // 0: 未匹配 1: 待确认 2: 完全匹配 3: 异常
         switch (item.matchStatus) {

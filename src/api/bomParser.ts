@@ -2,11 +2,15 @@ import request from '@/utils/request'
 
 enum API {
   MATERIAL_IDENTIFY_JOB = '/material/identify-job',
+  MATERIAL_IDENTIFY_JOB_V2 = '/material/identify-job-v2',
   MATERIAL_IDENTIFY_RESULTS = '/material/identify-results'
 }
 
 // 新增一个识别非标物料的任务
 export const reqCreateMaterialIdentifyJob = (data: any) => request.post(API.MATERIAL_IDENTIFY_JOB, data)
+
+// 新增一个识别非标物料的任务V2
+export const reqCreateMaterialIdentifyJobV2 = (data: any) => request.post(API.MATERIAL_IDENTIFY_JOB_V2, data)
 
 // 获取识别非标物料的任务详情（完成状态）
 export const reqGetMaterialIdentifyJob = (jobId: string) => request.get(`${API.MATERIAL_IDENTIFY_JOB}/?jobId=${jobId}`)

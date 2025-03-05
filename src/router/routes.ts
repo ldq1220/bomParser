@@ -11,6 +11,11 @@ export const constantRoute = [
     component: () => import('@/views/externalCrm/index.vue')
   },
   {
+    path: '/v2',
+    name: 'v2',
+    component: () => import('@/views/v2/index.vue')
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('@/views/404/index.vue')

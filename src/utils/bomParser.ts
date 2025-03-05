@@ -1,4 +1,9 @@
-import { reqCreateMaterialIdentifyJob, reqGetMaterialIdentifyResult, reqGetMaterialIdentifyJob } from '@/api/bomParser'
+import {
+  reqCreateMaterialIdentifyJob,
+  reqCreateMaterialIdentifyJobV2,
+  reqGetMaterialIdentifyResult,
+  reqGetMaterialIdentifyJob
+} from '@/api/bomParser'
 import { updateCrmData } from '@/views/externalCrm/api/updateCrmData'
 import { BroadcastChannel } from 'broadcast-channel'
 import useBomParserStore from '@/store/bomParser'
@@ -15,16 +20,19 @@ channel.onmessage = (msg) => {
 }
 
 interface CreateJobBody {
-  name: string | undefined
-  itemList?: string[]
+  name: string
+  itemList?: Array<Array<string | number>> // 二维数组，每个元素可以是字符串或数字
   excelUrl?: string
 }
 
 // 创建解析任务
-export const createParserJob = async (hasCrm: boolean, body: CreateJobBody) => {
+export const createParserJob = async (hasCrm: boolean, jobType: string, body: CreateJobBody) => {
   try {
     bomParserStore.tableLoading = true
-    const { result } = await reqCreateMaterialIdentifyJob(body)
+
+    const { result } =
+      jobType === 'v2' ? await reqCreateMaterialIdentifyJobV2(body) : await reqCreateMaterialIdentifyJob(body)
+
     const { jobId, itemList, headerSeq, itemCnt } = result
     bomParserStore.bomParserStatus = 'start'
     localStorage.setItem('jobData', JSON.stringify({ jobId, itemList, headerSeq, itemCnt }))
@@ -72,7 +80,7 @@ export const getParserResult = async (jobId: string, itemCnt: number) => {
         )
       }
     } catch {
-      // clearInterval(parserResultTimer);
+      // clearInterval(parserResultTimer)
     }
   }, 3000)
 }
@@ -81,6 +89,7 @@ export const getParserResult = async (jobId: string, itemCnt: number) => {
 export const getMaterialParserResult = async (jobId: string) => {
   try {
     await clearBomTableData()
+
     bomParserStore.tableLoading = true
     const {
       result: {
@@ -107,6 +116,7 @@ export const getMaterialParserResult = async (jobId: string) => {
         startSeq: 0
       } as any)
       const { result: resData } = await reqGetMaterialIdentifyResult(params)
+
       bomParserStore.percentage = 100
       for (let i = 0; i < resData.length; i++) {
         bomParserStore.bomParserTableData.push(resData[i])

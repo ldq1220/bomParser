@@ -31,7 +31,7 @@ onMounted(async () => {
   await getCrmData(bomId) // 获取crm数据
   const { excelUrl, status, fileName } = bomParserStore.externalCrm
   if (excelUrl && status === '1') {
-    createParserJob(true, {
+    createParserJob(true, 'v1', {
       name: fileName,
       excelUrl: excelUrl
     })
